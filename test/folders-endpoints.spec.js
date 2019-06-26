@@ -79,7 +79,7 @@ describe('Folders Endpoints', () => {
           .get(`/api/folders`)
           .expect(200)
           .expect(res => {
-            expect(res.body[0].title).to.eql(expectedFolder.title)
+            expect(res.body[0].name).to.eql(expectedFolder.name)
           })
       })
     })
@@ -132,7 +132,7 @@ describe('Folders Endpoints', () => {
       }
       const maliciousFolder = {
         id: 911,
-        title: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`
+        name: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`
       }
 
       beforeEach(`insert malicious folder`, () => {
@@ -151,7 +151,7 @@ describe('Folders Endpoints', () => {
           .get(`/api/folders/${maliciousFolder.id}`)
           .expect(200)
           .expect(res => {
-            expect(res.body.title).to.eql(`Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`)
+            expect(res.body.name).to.eql(`Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`)
           })
       })
     })
@@ -162,14 +162,14 @@ describe('Folders Endpoints', () => {
   describe(`POST /api/folders`, () => {
     it(`creates a folder, responding with 201 and the new folder`, () => {
       const newFolder = {
-        title: 'Test new Folder'
+        name: 'Test new Folder'
       }
       return supertest(app)
         .post(`/api/folders`)
         .send(newFolder)
         .expect(201)
         .expect(res => {
-          expect(res.body.title).to.eql(newFolder.title)
+          expect(res.body.name).to.eql(newFolder.name)
           expect(res.body).to.have.property('id')
         })
         .then(postRes => {
@@ -179,11 +179,11 @@ describe('Folders Endpoints', () => {
         })
     })
 
-    const requiredFields = ['title']
+    const requiredFields = ['name']
 
     requiredFields.forEach(field => {
       const newFolder = {
-        title: 'Test new Folder'
+        name: 'Test new Folder'
       }
 
       it(`responds with 400 and an error message when the '${field}' is missing`, () => {
@@ -205,7 +205,7 @@ describe('Folders Endpoints', () => {
         .send(maliciousFolder)
         .expect(201)
         .expect(res => {
-          expect(res.body.title).to.eql(expectedFolder.title)
+          expect(res.body.name).to.eql(expectedFolder.name)
         })
     })
   })
@@ -290,7 +290,7 @@ describe('Folders Endpoints', () => {
       it(`responds with 204 and updates the folder`, () => {
         const idToUpdate = 2
         const updateFolder = {
-          title: 'New Folder name'
+          name: 'New Folder name'
         }
         const expectedFolder = {
           ...testFolders[idToUpdate - 1],
@@ -314,7 +314,7 @@ describe('Folders Endpoints', () => {
           .send({ irrelevantField: 'foo' })
           .expect(400, {
             error: {
-              message: `Request body must contain a 'title'`
+              message: `Request body must contain a 'name'`
             }
           })
       })
